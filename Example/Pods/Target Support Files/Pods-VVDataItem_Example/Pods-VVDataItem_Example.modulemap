@@ -1,0 +1,6 @@
+framework module Pods_VVDataItem_Example {
+  umbrella header "Pods-VVDataItem_Example-umbrella.h"
+
+  export *
+  module * { export * }
+}
