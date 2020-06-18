@@ -19,5 +19,6 @@
     "ios": "8.0"
   },
   "source_files": "VVDataItem/Classes/**/*",
-  "requires_arc": true
+  "requires_arc": true,
+  "frameworks": "Foundation"
 }

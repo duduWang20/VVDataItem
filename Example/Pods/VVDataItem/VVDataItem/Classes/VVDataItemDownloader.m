@@ -68,6 +68,7 @@ static NSString * kVVDataItemDownloaderError = @"kVVDataItemDownloaderError";
 
 @property (nonatomic, strong) dispatch_queue_t requestQueue;
 @property (nonatomic, strong) dispatch_queue_t callbackQueue;
+@property (nonatomic, strong) dispatch_queue_t responseQueue;
 @property (nonatomic, strong) dispatch_semaphore_t semphore;
 
 @property (nonatomic, assign) NSInteger maxHTTPConnection;
@@ -144,6 +145,7 @@ static NSMutableDictionary<NSString *, VVDataItemDownloader *> *_downloaders;
         _mergedTasks = [[NSMutableDictionary alloc] init];
 
         _requestQueue = dispatch_queue_create("com.51vv.dataItemRequestQueue", DISPATCH_QUEUE_SERIAL);
+        _responseQueue = dispatch_queue_create("com.51vv.dataItemResponseQueue", DISPATCH_QUEUE_SERIAL);
         _callbackQueue = dispatch_queue_create("com.51vv.dataItemCallbackQueue", DISPATCH_QUEUE_SERIAL);
         
         _minTimeInterval = 1;
@@ -279,7 +281,7 @@ static NSMutableDictionary<NSString *, VVDataItemDownloader *> *_downloaders;
             if (!self) {
                 return ;
             }
-            dispatch_async(self.requestQueue, ^{
+            dispatch_async(self.responseQueue, ^{
                 [self downloaderLock];
                 self.currentHTTPConnection--;
                 NSMutableArray<VVDataResponseHandler *> *finishTasks = [NSMutableArray array];
@@ -320,7 +322,7 @@ static NSMutableDictionary<NSString *, VVDataItemDownloader *> *_downloaders;
             if (!self) {
                 return ;
             }
-            dispatch_async(self.requestQueue, ^{
+            dispatch_async(self.responseQueue, ^{
                 [self downloaderLock];
                 self.currentHTTPConnection--;
                 NSMutableArray<VVDataResponseHandler *> *finishTasks = [NSMutableArray array];
@@ -415,8 +417,7 @@ static NSMutableDictionary<NSString *, VVDataItemDownloader *> *_downloaders;
     });
 }
 
-- (void)saveDataItem:(nullable id<VVDataItemIdentifier,NSCoding>)model
-          dataItemID:(nullable id<VVDataItemIdentifier>)dataItemID {
+- (void)saveDataItem:(nullable id<VVDataItemIdentifier,NSCopying>)model dataItemID:(nullable id<VVDataItemIdentifier>)dataItemID {
     __weak typeof(self) wself = self;
     dispatch_async(self.requestQueue, ^{
         __strong typeof(wself) self = wself;
@@ -424,7 +425,8 @@ static NSMutableDictionary<NSString *, VVDataItemDownloader *> *_downloaders;
         if (wrapper) {
             model.dataItemVersion = wrapper.dataItemVersion;
         }
-        [self.cache setObject:model forKey:[model dataItemID]];
+        id<VVDataItemIdentifier, NSCoding> data = (id<VVDataItemIdentifier, NSCoding>)model;
+        [self.cache setObject:data forKey:[data dataItemID]];
     });
 }
 

@@ -9,8 +9,6 @@
 #ifndef VVDataItemProtocol_h
 #define VVDataItemProtocol_h
 
-NS_ASSUME_NONNULL_BEGIN
-
 /*
 数据项标志协议
 */
@@ -56,7 +54,7 @@ typedef void (^VVDataItemDownloadFailureBlock)(NSArray<NSString *> *dataItemIDs,
  数据项本地缓存协议
  */
 
-typedef void (^VVDataItemReceiptorSuccessBlock)(id<VVDataItemIdentifier> dataItem);
+typedef void (^VVDataItemReceiptorSuccessBlock)(_Nullable id<VVDataItemIdentifier> dataItem);
 typedef void (^VVDataItemReceiptorFailureBlock)(NSString *dataItemID, NSError * _Nullable error);
 
 @protocol VVDataItemDownloaderCacher
@@ -64,7 +62,7 @@ typedef void (^VVDataItemReceiptorFailureBlock)(NSString *dataItemID, NSError * 
 @property (nonatomic, assign) NSTimeInterval ageLimit;
 @property (nonatomic, assign) NSTimeInterval invalidCachingTime;
 
-- (void)setObject:(id<NSCoding>)object forKey:(NSString *)key;
+- (void)setObject:(nullable id<NSCoding>)object forKey:(NSString *)key;
 - (nullable id<NSCoding>)objectForKey:(NSString *)key;
 - (void)removeObjectForKey:(NSString *)key;
 
@@ -72,6 +70,5 @@ typedef void (^VVDataItemReceiptorFailureBlock)(NSString *dataItemID, NSError * 
 
 @end
 
-NS_ASSUME_NONNULL_END
 
 #endif /* VVDataItemProtocol_h */

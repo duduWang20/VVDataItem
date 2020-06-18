@@ -3,6 +3,7 @@ use_frameworks!
 platform :ios, '8.0'
 
 target 'VVDataItem_Example' do
+  
   pod 'VVDataItem' , :path => '../'
 
   target 'VVDataItem_Tests' do
